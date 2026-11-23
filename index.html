@@ -2,7 +2,7 @@
 <meta name="description" content="Krish Sinha – final-year International Business student in Vienna. Finance internships at BNP Paribas Real Estate and Komunikacja+.">
 <meta property="og:title" content="Krish Sinha · Portfolio">
 <meta property="og:description" content="International Business student in Vienna. Warsaw → Vienna.">
-<meta property="og:image" content="images/portrait.jpg">
+<meta property="og:image" content="portrait.jpg">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap">
 </head><body>
 <style id="pf-style">
@@ -397,8 +397,8 @@ state.photo = state.photo || null; state.logos = state.logos || {}; state.galler
 
 let canEdit = false, editing = false, assets = null, artifactNs = null, busy = false, statusMsg = "";
 const app = document.getElementById("app");
-const IMG = {"b3308778eae27589968e33f5ef90fab9": "images/portrait.jpg", "86aa7f6b3b23a01398d165ae098628e4": "images/warsaw.jpg", "028dc94d865c48f779fa85b94bfef00f": "images/vienna.jpg", "19684b14e752515cacffd7dcb75899fc": "images/photo-01.jpg", "91e3445e1847905bd46e555f76ecdc2c": "images/photo-02.jpg", "49e4ade49cf8de0b7e2cb1b6c2eff2c2": "images/photo-03.jpg", "87857f1af3f28b3ab10f7b7bb7eca168": "images/photo-04.jpg", "7306622f898aa8d249c84ddaa7e9c23d": "images/photo-05.jpg", "61ad13ce31746d9efe449c3b0ade70a7": "images/photo-06.jpg", "13c34f4df74f70515e49b2a30ad5ad28": "images/photo-07.jpg", "0c6f6af4ff58d21c52d839c559359a6e": "images/photo-08.jpg", "95efbd084fc87809c0131b5b141ae5aa": "images/photo-09.jpg", "9ce8c7fd19329a5391fb57b7cd306a15": "images/photo-10.jpg"};
-const blob = id => IMG[id] || ("images/" + id + ".jpg");
+const IMG = {"b3308778eae27589968e33f5ef90fab9": "portrait.jpg", "86aa7f6b3b23a01398d165ae098628e4": "warsaw.jpg", "028dc94d865c48f779fa85b94bfef00f": "vienna.jpg", "19684b14e752515cacffd7dcb75899fc": "photo-01.jpg", "91e3445e1847905bd46e555f76ecdc2c": "photo-02.jpg", "49e4ade49cf8de0b7e2cb1b6c2eff2c2": "photo-03.jpg", "87857f1af3f28b3ab10f7b7bb7eca168": "photo-04.jpg", "7306622f898aa8d249c84ddaa7e9c23d": "photo-05.jpg", "61ad13ce31746d9efe449c3b0ade70a7": "photo-06.jpg", "13c34f4df74f70515e49b2a30ad5ad28": "photo-07.jpg", "0c6f6af4ff58d21c52d839c559359a6e": "photo-08.jpg", "95efbd084fc87809c0131b5b141ae5aa": "photo-09.jpg", "9ce8c7fd19329a5391fb57b7cd306a15": "photo-10.jpg"};
+const blob = id => IMG[id] || ("" + id + ".jpg");
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
 function logoHTML(key, org){
