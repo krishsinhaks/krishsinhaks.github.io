@@ -1,0 +1,575 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>NVIDIA, Decoded · Krish Sinha</title><meta name="description" content="An interactive NVIDIA financial analysis by Krish Sinha: statements, ratios, stock and verdict."><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="icon" href="favicon.png" type="image/png" sizes="48x48"><link rel="apple-touch-icon" href="apple-touch-icon.png"><meta name="theme-color" content="#14233f"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}img{max-width:100%}[hidden]{display:none!important}</style></head><body><style>
+/* Layout: Krish's portfolio language (beige canvas, navy ink, tan accents, stacked rounded sections) applied to a lesson: read → calculate → judge. Single light theme by choice. */
+:root{
+  --sand:#ece3d3; --paper:#f8f3ea; --card:#fbf8f2; --ink:#14233f; --ink-2:#3d4b68; --muted:#6b7895;
+  --navy:#24407a; --tan:#e2cfa9; --line:#d5c8b1;
+  --s1:#2f55a4; --s2:#b8862f; --s3:#4f8fd6;
+  --good:#2f7d5b; --bad:#b3412e;
+  --font:"Poppins",ui-sans-serif,system-ui,-apple-system,sans-serif;
+  color-scheme:light;
+}
+html{scroll-behavior:smooth}
+html,body{overflow-x:clip}
+body{background:var(--sand);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.65;margin:0}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3,h4{margin:0;line-height:1.1;text-wrap:balance}
+a{color:var(--navy)}
+p{margin:0 0 14px}
+.num{font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--navy);outline-offset:3px}
+
+/* bar */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:31;background:var(--ink)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--ink);color:#f4ead6;box-shadow:0 6px 20px rgba(15,27,51,.18)}
+.bar-in{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:14px;min-height:56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.mark{justify-self:start;font-weight:800;letter-spacing:-.03em;font-size:19px;text-decoration:none;color:#f4ead6;white-space:nowrap}
+.mark small{font-weight:500;font-size:11px;color:var(--tan);margin-left:8px;letter-spacing:.1em}
+.idx{display:flex;gap:2px;justify-content:center;min-width:0}
+.idx a{text-decoration:none;font-size:13.5px;font-weight:500;padding:7px 12px;border-radius:8px;color:#cfd6e6;white-space:nowrap}
+.idx a b{font-weight:600;color:var(--tan);margin-right:6px;font-size:11px}
+.idx a:hover{background:#22365e;color:#fff}
+.bar .cta{justify-self:end;background:var(--tan);color:var(--ink);font-weight:600;font-size:13.5px;text-decoration:none;padding:8px 14px;border-radius:8px;white-space:nowrap}
+
+/* hero */
+.hero{padding-block:56px 96px;position:relative}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.hero h1{font-size:clamp(56px,10vw,128px);font-weight:800;letter-spacing:-.05em;line-height:.9;margin:14px 0 18px}
+.hero h1 span{color:var(--navy)}
+.lede{font-size:19px;color:var(--ink-2);max-width:58ch}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:34px}
+.stat{background:var(--paper);border-radius:18px;padding:16px 18px;box-shadow:0 10px 26px rgba(15,27,51,.1);transform:rotate(var(--r,0deg))}
+.stat.dark{background:var(--ink);color:#f4ead6}
+.stat.tan{background:var(--tan)}
+.stat b{display:block;font-size:30px;font-weight:700;letter-spacing:-.03em;line-height:1.1}
+.stat span{font-size:12.5px;opacity:.85}
+.progress{margin-top:30px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:14px;color:var(--ink-2)}
+.pbar{flex:1 1 220px;max-width:360px;height:10px;border-radius:99px;background:var(--paper);box-shadow:inset 0 0 0 1px var(--line);overflow:hidden}
+.pbar i{display:block;height:100%;width:0;background:var(--navy);border-radius:99px;transition:width .4s}
+
+/* sections */
+section{position:relative;border-radius:40px 40px 0 0;margin-top:-40px;box-shadow:0 -16px 36px rgba(15,27,51,.07);padding-block:88px}
+.s-paper{background:var(--paper)}.s-sand{background:var(--sand)}.s-ink{background:var(--ink);color:#f4ead6}
+.s-ink a{color:var(--tan)}
+.big{font-weight:700;color:#7d8aa6;font-size:clamp(42px,7vw,88px);letter-spacing:-.045em;line-height:.92;margin-bottom:14px}
+.big em{font-style:normal;color:var(--ink)}
+.s-ink .big{color:#a9b4cb}.s-ink .big em{color:var(--tan)}
+.sec-lede{font-size:17px;color:var(--ink-2);max-width:62ch;margin-bottom:36px}
+.s-ink .sec-lede{color:#cfd6e6}
+.lesson-no{display:inline-block;background:var(--ink);color:#f4ead6;font-size:12px;font-weight:600;letter-spacing:.14em;padding:5px 12px;border-radius:99px;margin-bottom:16px}
+.s-ink .lesson-no{background:var(--tan);color:var(--ink)}
+h3{font-size:24px;font-weight:700;letter-spacing:-.02em;margin:40px 0 10px}
+h4{font-size:17px;font-weight:600;margin:0 0 6px}
+
+/* explainer cards */
+.cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.cols>*{min-width:0}
+.card{background:var(--card);border-radius:18px;padding:20px;box-shadow:0 8px 22px rgba(15,27,51,.07)}
+.card p{font-size:14.5px;color:var(--ink-2);margin:0}
+.card .q{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.note{display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px;background:#fff;border-radius:14px;padding:14px 16px;margin:16px 0;box-shadow:0 0 0 1px var(--line);font-size:14.5px}
+.note .ic{width:32px;height:32px;border-radius:10px;background:var(--tan);display:grid;place-items:center;font-weight:700}
+.note.warn .ic{background:#f3d9d2;color:var(--bad)}
+.note p{margin:0}
+.flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;align-items:stretch;margin:20px 0 6px}
+.flow div{background:var(--ink);color:#f4ead6;padding:14px 16px;font-size:13.5px;position:relative}
+.flow div:first-child{border-radius:14px 0 0 14px}.flow div:last-child{border-radius:0 14px 14px 0}
+.flow div+div{border-left:2px solid var(--sand)}
+.flow b{display:block;color:var(--tan);font-size:12px;letter-spacing:.1em;text-transform:uppercase}
+
+/* tables */
+.tbl-wrap{overflow-x:auto;background:#fff;border-radius:16px;box-shadow:0 0 0 1px var(--line);margin:14px 0}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:14px}
+th,td{padding:10px 14px;text-align:right;border-bottom:1px solid #eee5d6;white-space:nowrap}
+th:first-child,td:first-child{text-align:left;white-space:normal}
+thead th{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--card);position:sticky;top:0}
+tr.total td{font-weight:600;border-top:2px solid var(--ink)}
+tr.sub td:first-child{padding-left:28px;color:var(--ink-2)}
+td.hl{background:#fbf3e2}
+caption{caption-side:bottom;text-align:left;padding:10px 14px;font-size:12.5px;color:var(--muted)}
+
+/* ratio cards */
+.group{margin-top:56px}
+.group-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:18px}
+.group-h h3{margin:0}
+.group-h span{font-size:14px;color:var(--muted)}
+.ratios{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.ratios>*{min-width:0}
+.ratio{background:#fff;border-radius:18px;padding:20px;box-shadow:0 0 0 1px var(--line)}
+.ratio .top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.ratio .val{font-size:32px;font-weight:700;letter-spacing:-.03em;line-height:1;color:var(--navy);white-space:nowrap}
+.ratio .val small{display:block;font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.06em;text-align:right;margin-top:4px}
+.formula{display:inline-block;background:var(--paper);border-radius:8px;padding:6px 10px;font-size:13.5px;font-weight:500;margin:10px 0}
+.work{font-size:13.5px;color:var(--ink-2);margin:0 0 10px}
+.work b{color:var(--ink)}
+.spark{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;align-items:end;height:64px;margin:6px 0 4px}
+.spark i{display:block;background:var(--s1);border-radius:4px 4px 0 0;min-height:2px;position:relative}
+.spark i.neg{background:var(--s2)}
+.spark-l{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;font-size:11px;color:var(--muted);text-align:center}
+.spark-l span b{display:block;color:var(--ink);font-weight:600;font-size:11.5px}
+.means{font-size:14px;margin:10px 0 0}
+.means b{color:var(--ink)}
+.watch{font-size:13px;color:var(--bad);margin-top:6px}
+
+/* exercises */
+.ex{background:var(--ink);color:#f4ead6;border-radius:18px;padding:20px;margin-top:16px;grid-column:1 / -1}
+.ex-h{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.ex-h b{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--tan)}
+.ex-h .done{font-size:12px;color:#9fd3b6}
+.ex p{color:#cfd6e6;font-size:14.5px;margin:8px 0 12px}
+.ex .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.ex input{width:160px;max-width:100%;font:inherit;font-size:16px;padding:9px 12px;border-radius:10px;border:0;background:#f4ead6;color:var(--ink)}
+.ex .unit{font-size:14px;color:#cfd6e6}
+.btn{font:inherit;font-size:14px;font-weight:600;border:0;border-radius:10px;padding:9px 14px;cursor:pointer;background:var(--tan);color:var(--ink)}
+.btn.ghost{background:transparent;color:#f4ead6;box-shadow:inset 0 0 0 1.5px #4a5a7e}
+.fb{font-size:14px;margin-top:10px;min-height:1.4em}
+.fb.ok{color:#9fd3b6}.fb.no{color:#f3b2a3}
+.sol{background:#1c2e52;border-radius:12px;padding:12px 14px;margin-top:10px;font-size:14px;color:#e6ebf5}
+
+/* charts */
+.chart{background:#fff;border-radius:18px;padding:18px 18px 12px;box-shadow:0 0 0 1px var(--line);margin:18px 0;position:relative}
+.chart h4{margin-bottom:2px}
+.chart .sub{font-size:13px;color:var(--muted);margin-bottom:8px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--ink-2);margin-bottom:6px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.legend i.ln{height:3px;border-radius:2px;vertical-align:3px;width:16px}
+svg.c{width:100%;height:auto;display:block;overflow:visible}
+svg.c text{font-family:var(--font);fill:var(--muted);font-size:11px}
+svg.c .lab{fill:var(--ink);font-weight:600;font-size:11.5px}
+svg.c .grid{stroke:#ece4d6;stroke-width:1}
+svg.c .axis{stroke:#cbbfa9;stroke-width:1}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:#f4ead6;font-size:12.5px;padding:8px 10px;border-radius:10px;box-shadow:0 8px 20px rgba(15,27,51,.25);white-space:nowrap;z-index:5;transform:translate(-50%,-110%)}
+.tip b{color:var(--tan)}
+.tip[hidden]{display:none}
+details.tview{margin-top:6px;font-size:13px}
+details.tview summary{cursor:pointer;color:var(--navy);font-weight:500}
+
+/* verdict */
+.vgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.vgrid>*{min-width:0}
+.vcard{background:#1c2e52;border-radius:18px;padding:22px}
+.vcard h4{color:var(--tan);font-size:18px;margin-bottom:10px}
+.vcard ul{margin:0;padding-left:18px;color:#e6ebf5;font-size:14.5px}
+.vcard li{margin-bottom:8px}
+.take{background:var(--tan);color:var(--ink);border-radius:18px;padding:22px;margin-top:16px;font-size:16px}
+.take b{display:block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px}
+.gloss{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.gloss>*{min-width:0}
+.gloss div{background:var(--card);border-radius:14px;padding:14px;font-size:13.5px;color:var(--ink-2)}
+.gloss b{display:block;color:var(--ink);font-size:14.5px}
+footer{background:var(--ink);color:#a9b4cb;font-size:13px}
+footer .wrap{padding-block:26px calc(26px + env(safe-area-inset-bottom,0px));display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+footer a{color:var(--tan)}
+
+/* reveal */
+[data-rv]{transition:opacity .8s cubic-bezier(.2,.7,.2,1),transform .8s cubic-bezier(.2,.7,.2,1)}
+.rv-pre{opacity:.15;transform:translateY(40px)}
+.rv-pre.rv-up{transform:translateY(-40px)}
+
+@media (max-width:900px){
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cols,.gloss{grid-template-columns:1fr 1fr}
+  .ratios,.vgrid{grid-template-columns:1fr}
+  .idx a.opt{display:none}
+}
+@media (max-width:640px){
+  .bar-in{grid-template-columns:auto minmax(0,1fr);gap:4px 10px;padding-block:8px}
+  .idx{grid-column:1 / -1;grid-row:2;justify-content:safe center;overflow-x:auto;scrollbar-width:none;margin:0 -6px}
+  .idx a{padding:6px 9px}.idx a.opt{display:inline}
+  .mark small{display:none}
+  .hero{padding-block:36px 80px}
+  section{padding-block:68px}
+  .cols,.gloss{grid-template-columns:1fr}
+  .flow{grid-template-columns:1fr}
+  .flow div:first-child{border-radius:14px 14px 0 0}.flow div:last-child{border-radius:0 0 14px 14px}
+  .flow div+div{border-left:0;border-top:2px solid var(--sand)}
+  .stat b{font-size:24px}
+  .ratio .val{font-size:26px}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+
+<header class="bar"><div class="bar-in">
+  <a class="mark" href="#top">KS<small>CASE STUDY</small></a>
+  <nav class="idx" aria-label="Lessons"><a href="#statements"><b>01</b>Statements</a><a href="#ratios"><b>02</b>Ratios</a><a href="#stock"><b>03</b>Stock</a><a href="#verdict" class="opt"><b>04</b>Verdict</a></nav>
+  <a class="cta" href="index.html">Portfolio ↗</a>
+</div></header>
+
+<main id="app"></main>
+
+<script type="application/json" id="data">{"years":["FY22","FY23","FY24","FY25","FY26"],"rows":{"FY22":{"rev":26914.0,"cogs":9439.0,"gp":17475.0,"rd":5268.0,"sga":2166.0,"opex":7434.0,"opinc":10041.0,"tax":189.0,"ni":9752.0,"assets":44187.0,"ca":28829.0,"liab":17575.0,"cl":4335.0,"eq":26612.0,"cash":1990.0,"ar":4650.0,"inv":2605.0,"debt":10946.0,"ocf":9108.0,"capex":976.0,"buyback":0.0,"div":399.0,"sbc":2004.0,"icf":-9830.0,"fcf_fin":1865.0,"other_opex":0.0,"pretax":9941.0,"nonop":-100.0,"eps":0.39,"dil_sh":25350,"price_fyend":24.32,"end":"2022-01-30","k":{"rev_growth":61.4,"gm":64.93,"om":37.31,"nm":36.23,"rd_pct":19.57,"roe":44.83,"roa":26.73,"current":6.65,"quick":6.05,"de":0.41,"liab_assets":39.77,"inv_turn":4.26,"dio":85.67,"dso":63.06,"asset_turn":0.74,"fcf":8132.0,"fcf_margin":30.21,"cash_conv":0.93,"sbc_pct":7.45,"sh_return":399.0,"sh_return_pct_fcf":4.91,"tax_rate":1.9,"pe_fyend":62.36,"mcap_fyend":616.51,"ps_fyend":22.91}},"FY23":{"rev":26974.0,"cogs":11618.0,"gp":15356.0,"rd":7339.0,"sga":2440.0,"opex":11132.0,"opinc":4224.0,"tax":-187.0,"ni":4368.0,"assets":41182.0,"ca":23073.0,"liab":19081.0,"cl":6563.0,"eq":22101.0,"cash":3389.0,"ar":3827.0,"inv":5159.0,"debt":10953.0,"ocf":5641.0,"capex":1833.0,"buyback":10039.0,"div":398.0,"sbc":2709.0,"icf":7375.0,"fcf_fin":-11617.0,"other_opex":1353.0,"pretax":4181.0,"nonop":-43.0,"eps":0.17,"dil_sh":25070,"price_fyend":21.1,"end":"2023-01-29","k":{"rev_growth":0.22,"gm":56.93,"om":15.66,"nm":16.19,"rd_pct":27.21,"roe":17.93,"roa":10.23,"current":3.52,"quick":2.73,"de":0.5,"liab_assets":46.33,"inv_turn":2.99,"dio":121.96,"dso":51.79,"asset_turn":0.63,"fcf":3808.0,"fcf_margin":14.12,"cash_conv":1.29,"sbc_pct":10.04,"sh_return":10437.0,"sh_return_pct_fcf":274.08,"tax_rate":-4.47,"pe_fyend":124.12,"mcap_fyend":528.98,"ps_fyend":19.61}},"FY24":{"rev":60922.0,"cogs":16621.0,"gp":44301.0,"rd":8675.0,"sga":2654.0,"opex":11329.0,"opinc":32972.0,"tax":4058.0,"ni":29760.0,"assets":65728.0,"ca":44345.0,"liab":22750.0,"cl":10631.0,"eq":42978.0,"cash":7280.0,"ar":9999.0,"inv":5282.0,"debt":9709.0,"ocf":28090.0,"capex":1069.0,"buyback":9533.0,"div":395.0,"sbc":3549.0,"icf":-10566.0,"fcf_fin":-13633.0,"other_opex":0.0,"pretax":33818.0,"nonop":846.0,"eps":1.19,"dil_sh":24940,"price_fyend":66.16,"end":"2024-01-28","k":{"rev_growth":125.85,"gm":72.72,"om":54.12,"nm":48.85,"rd_pct":14.24,"roe":91.46,"roa":55.67,"current":4.17,"quick":3.67,"de":0.23,"liab_assets":34.61,"inv_turn":3.18,"dio":114.64,"dso":59.91,"asset_turn":1.14,"fcf":27021.0,"fcf_margin":44.35,"cash_conv":0.94,"sbc_pct":5.83,"sh_return":9928.0,"sh_return_pct_fcf":36.74,"tax_rate":12.0,"pe_fyend":55.6,"mcap_fyend":1650.03,"ps_fyend":27.08}},"FY25":{"rev":130497.0,"cogs":32639.0,"gp":97858.0,"rd":12914.0,"sga":3491.0,"opex":16405.0,"opinc":81453.0,"tax":11146.0,"ni":72880.0,"assets":111601.0,"ca":80126.0,"liab":32274.0,"cl":18047.0,"eq":79327.0,"cash":8589.0,"ar":23065.0,"inv":10080.0,"debt":8463.0,"ocf":64089.0,"capex":3236.0,"buyback":33706.0,"div":834.0,"sbc":4737.0,"icf":-20421.0,"fcf_fin":-42359.0,"other_opex":0.0,"pretax":84026.0,"nonop":2573.0,"eps":2.94,"dil_sh":24804,"price_fyend":120.07,"end":"2025-01-26","k":{"rev_growth":114.2,"gm":74.99,"om":62.42,"nm":55.85,"rd_pct":9.9,"roe":119.18,"roa":82.2,"current":4.44,"quick":3.88,"de":0.11,"liab_assets":28.92,"inv_turn":4.25,"dio":85.9,"dso":64.51,"asset_turn":1.47,"fcf":60853.0,"fcf_margin":46.63,"cash_conv":0.88,"sbc_pct":3.63,"sh_return":34540.0,"sh_return_pct_fcf":56.76,"tax_rate":13.26,"pe_fyend":40.84,"mcap_fyend":2978.22,"ps_fyend":22.82}},"FY26":{"rev":215938.0,"cogs":62475.0,"gp":153463.0,"rd":18497.0,"sga":4579.0,"opex":23076.0,"opinc":130387.0,"tax":21383.0,"ni":120067.0,"assets":206803.0,"ca":125605.0,"liab":49510.0,"cl":32163.0,"eq":157293.0,"cash":10605.0,"ar":38466.0,"inv":21403.0,"debt":8468.0,"ocf":102718.0,"capex":6042.0,"buyback":40086.0,"div":974.0,"sbc":6386.0,"icf":-52228.0,"fcf_fin":-48474.0,"other_opex":0.0,"pretax":141450.0,"nonop":11063.0,"eps":4.9,"dil_sh":24514,"price_fyend":191.13,"end":"2026-01-25","k":{"rev_growth":65.47,"gm":71.07,"om":60.38,"nm":55.6,"rd_pct":8.57,"roe":101.49,"roa":75.42,"current":3.91,"quick":3.24,"de":0.05,"liab_assets":23.94,"inv_turn":3.97,"dio":91.97,"dso":65.02,"asset_turn":1.36,"fcf":96676.0,"fcf_margin":44.77,"cash_conv":0.86,"sbc_pct":2.96,"sh_return":41060.0,"sh_return_pct_fcf":42.47,"tax_rate":15.12,"pe_fyend":39.01,"mcap_fyend":4685.36,"ps_fyend":21.7}}},"val":{"price":168.15,"price_date":"2026-11-23","shares_m":24100,"mcap_b":4052.4,"pe_fy26":34.3,"pe_ttm":21.3,"ps_ttm":13.4,"fcf_yield_fy26":2.39,"div_yield":0.024,"ttm":{"rev":302970,"ni":192880,"eps":7.91,"gp":226241,"opinc":197579,"h1fy27":{"rev":177837,"opinc":117270,"ni":118010}}},"series":[["2021-11-22",31.5,458.97],["2021-11-29",30.69,453.42],["2021-12-06",30.2,470.74],["2021-12-13",27.8,459.87],["2021-12-20",29.64,470.6],["2021-12-27",29.41,474.96],["2022-01-03",27.25,466.09],["2022-01-10",26.94,464.72],["2022-01-17",23.37,437.98],["2022-01-24",22.84,441.95],["2022-01-31",24.32,448.7],["2022-02-07",23.95,440.46],["2022-02-14",23.64,434.23],["2022-02-21",24.16,437.75],["2022-02-28",22.94,432.17],["2022-03-07",22.1,420.07],["2022-03-14",26.45,444.52],["2022-03-21",27.69,452.69],["2022-03-28",26.71,452.92],["2022-04-04",23.12,447.57],["2022-04-11",21.26,437.79],["2022-04-18",19.51,426.04],["2022-04-25",18.55,412.0],["2022-05-02",18.67,411.34],["2022-05-09",17.71,401.72],["2022-05-16",16.69,389.63],["2022-05-23",18.81,415.26],["2022-05-30",18.72,410.54],["2022-06-06",16.97,389.8],["2022-06-13",15.88,365.86],["2022-06-20",17.13,390.08],["2022-06-27",14.52,381.24],["2022-07-04",15.84,388.67],["2022-07-11",15.76,385.13],["2022-07-18",17.32,395.09],["2022-07-25",18.16,411.99],["2022-08-01",18.99,413.47],["2022-08-08",18.71,427.1],["2022-08-15",17.85,422.14],["2022-08-22",16.26,405.31],["2022-08-29",13.65,392.24],["2022-09-05",14.39,406.6],["2022-09-12",13.2,385.56],["2022-09-19",12.52,367.95],["2022-09-26",12.14,357.18],["2022-10-03",12.08,362.79],["2022-10-10",11.23,357.63],["2022-10-17",12.47,374.29],["2022-10-24",13.83,389.02],["2022-10-31",14.16,376.35],["2022-11-07",16.33,398.51],["2022-11-14",15.41,396.03],["2022-11-21",16.27,402.33],["2022-11-28",16.88,406.91],["2022-12-05",17.0,393.28],["2022-12-12",16.57,383.27],["2022-12-19",15.21,382.91],["2022-12-26",14.61,382.43],["2023-01-02",14.86,388.08],["2023-01-09",16.9,398.5],["2023-01-16",17.84,395.88],["2023-01-23",20.36,405.68],["2023-01-30",21.1,412.35],["2023-02-06",21.26,408.04],["2023-02-13",21.39,407.26],["2023-02-20",23.29,396.38],["2023-02-27",23.89,404.19],["2023-03-06",22.97,385.91],["2023-03-13",25.73,389.99],["2023-03-20",26.78,395.75],["2023-03-27",27.78,409.39],["2023-04-03",27.04,409.19],["2023-04-10",26.76,412.46],["2023-04-17",27.12,412.2],["2023-04-24",27.75,415.93],["2023-05-01",28.68,412.63],["2023-05-08",28.34,411.59],["2023-05-15",31.26,418.62],["2023-05-22",38.95,420.02],["2023-05-29",39.33,427.92],["2023-06-05",38.77,429.9],["2023-06-12",42.69,439.46],["2023-06-19",42.21,433.21],["2023-06-26",42.3,443.28],["2023-07-03",42.5,438.55],["2023-07-10",45.47,449.28],["2023-07-17",44.31,452.18],["2023-07-24",46.75,456.92],["2023-07-31",44.68,446.81],["2023-08-07",40.85,445.65],["2023-08-14",43.3,436.5],["2023-08-21",46.02,439.97],["2023-08-28",48.51,451.19],["2023-09-04",45.57,445.52],["2023-09-11",43.9,443.37],["2023-09-18",41.61,430.42],["2023-09-25",43.5,427.48],["2023-10-02",45.76,429.54],["2023-10-09",45.46,431.5],["2023-10-16",41.39,421.19],["2023-10-23",40.5,410.68],["2023-10-30",45.01,434.69],["2023-11-06",48.33,440.61],["2023-11-13",49.3,450.79],["2023-11-20",47.78,455.3],["2023-11-27",46.76,459.1],["2023-12-04",47.51,460.2],["2023-12-11",48.89,469.33],["2023-12-18",48.83,473.65],["2023-12-25",49.52,475.31],["2024-01-01",49.1,467.92],["2024-01-08",54.71,476.68],["2024-01-15",59.49,482.43],["2024-01-22",61.03,487.41],["2024-01-29",66.16,494.35],["2024-02-05",72.13,501.2],["2024-02-12",72.61,499.51],["2024-02-19",78.82,507.85],["2024-02-26",82.28,512.85],["2024-03-04",87.53,511.72],["2024-03-11",87.84,509.83],["2024-03-18",94.29,521.21],["2024-03-25",90.36,523.07],["2024-04-01",88.01,518.43],["2024-04-08",88.19,510.85],["2024-04-15",76.2,495.16],["2024-04-22",87.74,508.26],["2024-04-29",88.79,511.29],["2024-05-06",89.88,520.84],["2024-05-13",92.48,529.45],["2024-05-20",106.47,529.44],["2024-05-27",109.63,527.37],["2024-06-03",120.89,534.01],["2024-06-10",131.88,542.78],["2024-06-17",126.57,544.51],["2024-06-24",123.54,544.22],["2024-07-01",125.83,554.64],["2024-07-08",129.24,559.99],["2024-07-15",117.93,548.99],["2024-07-22",113.06,544.44],["2024-07-29",107.27,532.9],["2024-08-05",104.75,532.99],["2024-08-12",124.58,554.31],["2024-08-19",129.37,562.13],["2024-08-26",119.37,563.68],["2024-09-02",102.83,540.36],["2024-09-09",119.1,562.01],["2024-09-16",116.0,568.25],["2024-09-23",121.4,571.47],["2024-09-30",124.92,572.98],["2024-10-07",134.8,579.58],["2024-10-14",138.0,584.59],["2024-10-21",141.54,579.04],["2024-10-28",135.4,571.04],["2024-11-04",147.63,598.19],["2024-11-11",141.98,585.75],["2024-11-18",141.95,595.51],["2024-11-25",138.25,602.55],["2024-12-02",142.44,607.81],["2024-12-09",134.25,604.21],["2024-12-16",134.7,591.15],["2024-12-23",137.01,595.01],["2024-12-30",144.47,591.95],["2025-01-06",135.91,580.49],["2025-01-13",137.71,597.58],["2025-01-20",142.62,607.97],["2025-01-27",120.07,601.82],["2025-02-03",129.84,600.77],["2025-02-10",138.85,609.7],["2025-02-17",134.43,599.94],["2025-02-24",124.92,594.18],["2025-03-03",112.69,575.92],["2025-03-10",121.67,562.81],["2025-03-17",117.7,563.98],["2025-03-24",109.67,555.66],["2025-03-31",94.31,505.28],["2025-04-07",110.93,533.94],["2025-04-14",101.49,526.41],["2025-04-21",111.01,550.64],["2025-04-28",114.5,566.76],["2025-05-05",116.65,564.34],["2025-05-12",135.4,594.2],["2025-05-19",131.29,579.11],["2025-05-26",135.13,589.39],["2025-06-02",141.72,599.14],["2025-06-09",141.97,597.0],["2025-06-16",143.85,594.28],["2025-06-23",157.75,614.91],["2025-06-30",159.34,625.34],["2025-07-07",164.92,623.62],["2025-07-14",172.41,627.58],["2025-07-21",173.5,637.1],["2025-07-28",173.72,621.72],["2025-08-04",182.7,637.18],["2025-08-11",180.45,643.44],["2025-08-18",177.99,645.31],["2025-08-25",174.18,645.05],["2025-09-01",167.02,647.24],["2025-09-08",177.82,657.41],["2025-09-15",176.67,663.7],["2025-09-22",178.19,661.82],["2025-09-29",187.62,669.21],["2025-10-06",183.16,653.02],["2025-10-13",183.22,664.39],["2025-10-20",186.26,677.25],["2025-10-27",202.49,682.06],["2025-11-03",188.15,670.97],["2025-11-10",190.17,671.93],["2025-11-17",178.88,659.03],["2025-11-24",177.0,683.39],["2025-12-01",182.41,685.69],["2025-12-08",175.02,681.76],["2025-12-15",180.99,680.59],["2025-12-22",190.53,690.31],["2025-12-29",188.85,683.17],["2026-01-05",184.86,694.07],["2026-01-12",186.23,691.66],["2026-01-19",187.67,689.23],["2026-01-26",191.13,691.97],["2026-02-02",185.41,690.62],["2026-02-09",182.81,681.75],["2026-02-16",189.82,689.43],["2026-02-23",177.19,685.99],["2026-03-02",177.82,672.38],["2026-03-09",180.25,662.29],["2026-03-16",172.7,648.57],["2026-03-23",167.52,634.09],["2026-03-30",177.39,655.83],["2026-04-06",188.63,679.46],["2026-04-13",201.68,710.14],["2026-04-20",208.27,713.94],["2026-04-27",198.45,720.65],["2026-05-04",215.2,737.62],["2026-05-11",225.32,739.17],["2026-05-18",215.33,745.64],["2026-05-25",211.14,756.48],["2026-06-01",205.1,737.55],["2026-06-08",205.19,741.75],["2026-06-15",210.69,746.74],["2026-06-22",192.53,728.99],["2026-06-29",194.83,744.78],["2026-07-06",210.96,754.95],["2026-07-13",202.81,743.29],["2026-07-20",206.84,738.93],["2026-07-27",200.75,747.03],["2026-08-03",223.96,773.26],["2026-08-10",225.16,776.34],["2026-08-17",214.72,765.72],["2026-08-24",217.55,769.35],["2026-08-31",230.36,770.19],["2026-09-07",218.29,764.29],["2026-09-14",222.27,761.69],["2026-09-21",225.07,771.35],["2026-09-28",233.95,769.64],["2026-10-05",229.28,778.57],["2026-10-12",214.13,763.25],["2026-10-19",210.96,759.97],["2026-10-26",204.64,755.72],["2026-11-02",186.64,735.29],["2026-11-09",162.85,754.37],["2026-11-16",125.53,689.81],["2026-11-23",168.15,723.88]]}</script>
+<script>
+(function(){
+const D = JSON.parse(document.getElementById("data").textContent);
+const Y = D.years, R = D.rows, V = D.val, LABEL = {FY22:"FY2022",FY23:"FY2023",FY24:"FY2024",FY25:"FY2025",FY26:"FY2026"};
+const B = m => "$" + (m/1000).toFixed(1) + "B";
+const Mf = m => "$" + Math.round(m).toLocaleString("en-US") + "M";
+const P = (x,d=1) => x.toFixed(d) + "%";
+const X = (x,d=1) => x.toFixed(d) + "×";
+const k = (fy,key) => R[fy].k[key];
+const f26 = R.FY26, f25 = R.FY25;
+Y.forEach(fy => { R[fy].fcf_ = R[fy].ocf - R[fy].capex; });
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---------- exercises (answers computed from the same data) ---------- */
+const avgEq = (f25.eq + f26.eq)/2;
+const EX = {
+  gm:   {q:`FY2026 gross margin. Revenue was ${Mf(f26.rev)} and gross profit ${Mf(f26.gp)}.`, ans:f26.gp/f26.rev*100, tol:0.15, unit:"%", hint:"Gross profit ÷ revenue × 100.", sol:`${Mf(f26.gp)} ÷ ${Mf(f26.rev)} = ${(f26.gp/f26.rev).toFixed(4)} → <b>${P(f26.gp/f26.rev*100)}</b>. NVIDIA keeps about 71 cents of every revenue dollar after paying to make its chips.`},
+  growth:{q:`FY2026 revenue growth. Revenue went from ${Mf(f25.rev)} (FY2025) to ${Mf(f26.rev)} (FY2026).`, ans:(f26.rev/f25.rev-1)*100, tol:0.2, unit:"%", hint:"(This year ÷ last year − 1) × 100.", sol:`${Mf(f26.rev)} ÷ ${Mf(f25.rev)} = ${(f26.rev/f25.rev).toFixed(3)} → minus 1 → <b>${P((f26.rev/f25.rev-1)*100)}</b>.`},
+  om:   {q:`FY2026 operating margin. Operating income was ${Mf(f26.opinc)}.`, ans:f26.opinc/f26.rev*100, tol:0.15, unit:"%", hint:"Operating income ÷ revenue × 100.", sol:`${Mf(f26.opinc)} ÷ ${Mf(f26.rev)} = <b>${P(f26.opinc/f26.rev*100)}</b>. After paying for chips <i>and</i> research, sales and admin, 60 cents of each dollar is left.`},
+  current:{q:`FY2026 current ratio. Current assets ${Mf(f26.ca)}, current liabilities ${Mf(f26.cl)}.`, ans:f26.ca/f26.cl, tol:0.03, unit:"×", hint:"Current assets ÷ current liabilities.", sol:`${Mf(f26.ca)} ÷ ${Mf(f26.cl)} = <b>${X(f26.ca/f26.cl,2)}</b>. NVIDIA could pay everything due within a year almost four times over.`},
+  fcf:  {q:`FY2026 free cash flow in $ millions. Operating cash flow ${Mf(f26.ocf)}, capital spending ${Mf(f26.capex)}.`, ans:f26.ocf-f26.capex, tol:15, unit:"$M", hint:"Operating cash flow − capital expenditure.", sol:`${Mf(f26.ocf)} − ${Mf(f26.capex)} = <b>${Mf(f26.ocf-f26.capex)}</b>. This is the cash left over that NVIDIA can spend on buybacks, dividends or acquisitions.`},
+  roe:  {q:`FY2026 return on equity. Net income ${Mf(f26.ni)}. Equity was ${Mf(f25.eq)} at the start of the year and ${Mf(f26.eq)} at the end.`, ans:f26.ni/avgEq*100, tol:0.4, unit:"%", hint:"Use the average equity: (start + end) ÷ 2. Then net income ÷ average equity × 100.", sol:`Average equity = (${Mf(f25.eq)} + ${Mf(f26.eq)}) ÷ 2 = ${Mf(avgEq)}. ${Mf(f26.ni)} ÷ ${Mf(avgEq)} = <b>${P(f26.ni/avgEq*100)}</b>. Shareholders' money "earned" more than 100% in one year, which is extraordinary.`},
+  pe:   {q:`P/E ratio using the price on ${V.price_date} ($${V.price}) and FY2026 diluted EPS ($${f26.eps.toFixed(2)}).`, ans:V.price/f26.eps, tol:0.2, unit:"×", hint:"Share price ÷ earnings per share.", sol:`$${V.price} ÷ $${f26.eps.toFixed(2)} = <b>${X(V.price/f26.eps)}</b>. Investors pay about $34 for every $1 of last fiscal year's profit.`},
+  de:   {q:`FY2026 debt-to-equity. Total debt ${Mf(f26.debt)}, shareholders' equity ${Mf(f26.eq)}. Give it as a decimal.`, ans:f26.debt/f26.eq, tol:0.006, unit:"", hint:"Total debt ÷ shareholders' equity.", sol:`${Mf(f26.debt)} ÷ ${Mf(f26.eq)} = <b>${(f26.debt/f26.eq).toFixed(3)}</b>. About 5 cents of debt per dollar of equity: almost no borrowing.`}
+};
+let solved = {};
+try{ solved = JSON.parse(localStorage.getItem("nvda-solved")||"{}") || {}; }catch(e){ solved = {}; }
+function exHTML(id){
+  const e = EX[id];
+  return `<div class="ex" id="ex-${id}"><div class="ex-h"><b>Your turn</b><span class="done" id="done-${id}">${solved[id]?"✓ Solved":""}</span></div>
+    <p>${esc(e.q)}</p>
+    <form class="row" data-ex="${id}"><label class="sr" for="in-${id}" hidden>Your answer</label><input id="in-${id}" inputmode="decimal" autocomplete="off" placeholder="Your answer"><span class="unit">${e.unit}</span><button class="btn" type="submit">Check</button><button class="btn ghost" type="button" data-hint="${id}">Hint</button><button class="btn ghost" type="button" data-sol="${id}">Show working</button></form>
+    <div class="fb" id="fb-${id}" role="status"></div><div class="sol" id="sol-${id}" hidden></div></div>`;
+}
+
+/* ---------- small chart helpers ---------- */
+const NS = "http://www.w3.org/2000/svg";
+function scale(d0,d1,r0,r1){ return v => r0 + (v-d0)/(d1-d0)*(r1-r0); }
+function niceMax(v){ const p = Math.pow(10, Math.floor(Math.log10(v))); const m = v/p; return (m<=1?1:m<=2?2:m<=2.5?2.5:m<=5?5:10)*p; }
+
+function barChart(el, opt){
+  const W=640,H=280,L=48,Rr=16,T=16,Bm=30, iw=W-L-Rr, ih=H-T-Bm;
+  const dmax = Math.max(...opt.series.flatMap(s=>s.data)), step = niceMax(dmax/5), max = Math.ceil(dmax/step)*step, nt = Math.round(max/step);
+  const y = scale(0,max,T+ih,T), gw = iw/opt.cats.length, n = opt.series.length, bw = Math.min(34,(gw-18)/n);
+  let s = `<svg class="c" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(opt.aria)}">`;
+  for(let i=0;i<=nt;i++){ const v=step*i, yy=y(v); s+=`<line class="grid" x1="${L}" x2="${W-Rr}" y1="${yy}" y2="${yy}"/><text x="${L-8}" y="${yy+4}" text-anchor="end">${opt.fmtAxis(v)}</text>`; }
+  opt.cats.forEach((c,i)=>{
+    const gx = L + gw*i + (gw - (bw*n + 2*(n-1)))/2;
+    opt.series.forEach((se,j)=>{
+      const v=se.data[i], x=gx+j*(bw+2), yy=y(Math.max(v,0)), h=Math.abs(y(v)-y(0));
+      s+=`<path d="M${x},${y(0)} V${yy+4} Q${x},${yy} ${x+4},${yy} H${x+bw-4} Q${x+bw},${yy} ${x+bw},${yy+4} V${y(0)} Z" fill="${se.color}" data-tip="${esc(`${opt.labels[i]} · ${se.name}: <b>${opt.fmt(v)}</b>`)}"/>`;
+      if(i===opt.cats.length-1) s+=`<text class="lab" x="${x+bw/2}" y="${yy-6}" text-anchor="middle">${opt.fmtShort(v)}</text>`;
+    });
+    s+=`<text x="${L+gw*i+gw/2}" y="${H-8}" text-anchor="middle">${opt.cats[i]}</text>`;
+  });
+  s+=`<line class="axis" x1="${L}" x2="${W-Rr}" y1="${y(0)}" y2="${y(0)}"/></svg>`;
+  el.insertAdjacentHTML("beforeend", s);
+  hoverMarks(el);
+}
+function lineChart(el, opt){
+  const W=640,H=opt.h||280,L=48,Rr=opt.right||70,T=16,Bm=30, iw=W-L-Rr, ih=H-T-Bm, n=opt.x.length;
+  const all = opt.series.flatMap(s=>s.data);
+  const min = opt.min!=null?opt.min:0, max = opt.max||niceMax(Math.max(...all));
+  const x = scale(0,n-1,L,L+iw), y = scale(min,max,T+ih,T);
+  let s = `<svg class="c" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(opt.aria)}">`;
+  const ticks = opt.ticks || 4;
+  for(let i=0;i<=ticks;i++){ const v=min+(max-min)*i/ticks, yy=y(v); s+=`<line class="grid" x1="${L}" x2="${L+iw}" y1="${yy}" y2="${yy}"/><text x="${L-8}" y="${yy+4}" text-anchor="end">${opt.fmtAxis(v)}</text>`; }
+  (opt.xTicks||opt.x.map((_,i)=>i)).forEach(i=>{ s+=`<text x="${x(i)}" y="${H-8}" text-anchor="middle">${opt.xLabel(i)}</text>`; });
+  s+=`<line class="axis" x1="${L}" x2="${L+iw}" y1="${y(min)}" y2="${y(min)}"/>`;
+  if(opt.ref!=null) s+=`<line x1="${L}" x2="${L+iw}" y1="${y(opt.ref)}" y2="${y(opt.ref)}" stroke="#b9ad97" stroke-dasharray="4 4"/>`;
+  opt.series.forEach(se=>{
+    const pts = se.data.map((v,i)=> v==null?null:[x(i),y(v)]).filter(Boolean);
+    s+=`<polyline fill="none" stroke="${se.color}" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" points="${pts.map(p=>p.join(",")).join(" ")}"/>`;
+    if(opt.dots) se.data.forEach((v,i)=>{ s+=`<circle cx="${x(i)}" cy="${y(v)}" r="4.5" fill="${se.color}" stroke="#fff" stroke-width="2"/>`; });
+    const last = pts[pts.length-1]; s+=`<circle cx="${last[0]}" cy="${last[1]}" r="5" fill="${se.color}" stroke="#fff" stroke-width="2"/><text class="lab" x="${last[0]+10}" y="${last[1]+4+(se.dy||0)}">${esc(se.end)}</text>`;
+  });
+  s+=`<line class="xh" x1="0" x2="0" y1="${T}" y2="${T+ih}" stroke="#14233f" stroke-opacity=".25" visibility="hidden"/>`;
+  s+=`<rect x="${L}" y="${T}" width="${iw}" height="${ih}" fill="transparent" class="hit"/></svg>`;
+  el.insertAdjacentHTML("beforeend", s);
+  const svg = el.querySelector("svg.c:last-of-type"), tip = el.querySelector(".tip"), xh = svg.querySelector(".xh"), hit = svg.querySelector(".hit");
+  function move(ev){
+    const r = svg.getBoundingClientRect(), px = (ev.clientX - r.left) / r.width * W;
+    const i = Math.max(0, Math.min(n-1, Math.round((px - L)/iw*(n-1))));
+    xh.setAttribute("x1", x(i)); xh.setAttribute("x2", x(i)); xh.setAttribute("visibility","visible");
+    tip.innerHTML = `${esc(opt.tipX(i))}<br>` + opt.series.map(se=>`<span style="color:${se.color}">●</span> ${esc(se.name)}: <b>${opt.fmt(se.data[i])}</b>`).join("<br>");
+    const er = el.getBoundingClientRect(); tip.style.left = (x(i)/W*r.width + r.left - er.left) + "px"; tip.style.top = (r.top - er.top + 30) + "px"; tip.hidden = false;
+  }
+  hit.addEventListener("pointermove", move); hit.addEventListener("pointerdown", move);
+  hit.addEventListener("pointerleave", ()=>{ tip.hidden = true; xh.setAttribute("visibility","hidden"); });
+}
+function hoverMarks(el){
+  const tip = el.querySelector(".tip");
+  el.querySelectorAll("[data-tip]").forEach(m=>{
+    const show = ev => { tip.innerHTML = m.getAttribute("data-tip"); const er = el.getBoundingClientRect(), mr = m.getBoundingClientRect(); tip.style.left = (mr.left + mr.width/2 - er.left) + "px"; tip.style.top = (mr.top - er.top) + "px"; tip.hidden = false; m.style.opacity = .85; };
+    m.addEventListener("pointerenter", show); m.addEventListener("pointerdown", show);
+    m.addEventListener("pointerleave", ()=>{ tip.hidden = true; m.style.opacity = 1; });
+  });
+}
+
+/* ---------- ratio card ---------- */
+function ratio(o){
+  const vals = Y.map(fy => o.get(fy)); const mx = Math.max(...vals.map(Math.abs)) || 1;
+  return `<article class="ratio" data-rv>
+    <div class="top"><div><h4>${o.name}</h4><span class="formula">${o.formula}</span></div><div class="val">${o.fmt(vals[4])}<small>FY2026</small></div></div>
+    <p class="work">${o.work}</p>
+    <div class="spark" aria-hidden="true">${vals.map(v=>`<i class="${v<0?"neg":""}" style="height:${Math.max(3,Math.abs(v)/mx*100)}%"></i>`).join("")}</div>
+    <div class="spark-l">${Y.map((fy,i)=>`<span><b>${o.fmt(vals[i])}</b>${fy}</span>`).join("")}</div>
+    <p class="means"><b>What it tells you:</b> ${o.means}</p>${o.watch?`<p class="watch">Watch out: ${o.watch}</p>`:""}
+  </article>`;
+}
+
+/* ---------- statements tables ---------- */
+const row = (label, key, cls, fmt) => `<tr class="${cls||""}"><td>${label}</td>${Y.map(fy=>`<td class="num ${fy==="FY26"?"hl":""}">${(fmt||(v=>Math.round(v).toLocaleString("en-US")))(typeof key==="function"?key(R[fy]):R[fy][key])}</td>`).join("")}</tr>`;
+const thead = `<thead><tr><th>$ millions</th>${Y.map(fy=>`<th>${LABEL[fy]}</th>`).join("")}</tr></thead>`;
+const neg = v => v ? "(" + Math.round(v).toLocaleString("en-US") + ")" : "–";
+
+const totalReturn = (D.series[D.series.length-1][1]/D.series[0][1]-1)*100;
+const spyReturn = (D.series[D.series.length-1][2]/D.series[0][2]-1)*100;
+
+document.getElementById("app").innerHTML = `
+<div class="wrap hero" id="top">
+  <div class="eyebrow">Finance case study · Krish Sinha · Data to ${esc(V.price_date)}</div>
+  <h1>NVIDIA, <span>decoded.</span></h1>
+  <p class="lede">A hands-on lesson in reading a company like an analyst. You'll walk through NVIDIA's three financial statements, calculate the key ratios yourself, and finish with a view on the stock. Every number comes from NVIDIA's official filings with the US Securities and Exchange Commission (SEC).</p>
+  <div class="stats">
+    <div class="stat" style="--r:-2deg"><b class="num">${B(f26.rev)}</b><span>Revenue, FY2026</span></div>
+    <div class="stat dark" style="--r:1.5deg"><b class="num">${P(k("FY26","nm"))}</b><span>Net profit margin, FY2026</span></div>
+    <div class="stat tan" style="--r:-1deg"><b class="num">$${(V.mcap_b/1000).toFixed(2)}T</b><span>Market value, ${esc(V.price_date)}</span></div>
+    <div class="stat" style="--r:2deg"><b class="num">+${Math.round(totalReturn)}%</b><span>Share price, last 5 years</span></div>
+  </div>
+  <div class="progress"><span><b id="pcount">0</b> of ${Object.keys(EX).length} exercises solved</span><div class="pbar" aria-hidden="true"><i id="pfill"></i></div></div>
+</div>
+
+<section class="s-paper" id="before"><div class="wrap">
+  <span class="lesson-no">BEFORE YOU START</span>
+  <h2 class="big">Three things <em>to know</em></h2>
+  <div class="cols">
+    <div class="card" data-rv><div class="q">Fiscal years</div><p>NVIDIA's year ends in late January. So <b>FY2026</b> runs from late January 2025 to <b>25 January 2026</b>. Always check a company's year-end before comparing it with others.</p></div>
+    <div class="card" data-rv><div class="q">Units</div><p>Statement figures are in <b>US$ millions</b>. $215,938M is $215.9 billion. Analysts write billions as "B" and trillions as "T".</p></div>
+    <div class="card" data-rv><div class="q">Stock splits</div><p>NVIDIA split each share into 4 in 2021 and into 10 in 2024. A split doesn't change the company's value, so I've <b>adjusted all older per-share numbers</b> to today's share count to keep them comparable.</p></div>
+  </div>
+</div></section>
+
+<section class="s-sand" id="statements"><div class="wrap">
+  <span class="lesson-no">LESSON 1</span>
+  <h2 class="big">The three <em>statements</em></h2>
+  <p class="sec-lede">Every company publishes three linked reports. Learn what question each one answers, and the rest of finance becomes much easier.</p>
+  <div class="flow" data-rv>
+    <div><b>Income statement</b>Did the company make a profit this year?</div>
+    <div><b>Balance sheet</b>What does it own and owe on the last day of the year?</div>
+    <div><b>Cash flow statement</b>Where did the actual cash come from and go?</div>
+  </div>
+  <div class="note"><span class="ic">↻</span><p><b>How they connect:</b> net income from the income statement is added to equity on the balance sheet, and it is the starting point of the cash flow statement. That's why analysts read all three together.</p></div>
+
+  <h3>1a · Income statement</h3>
+  <p>Read it top to bottom: what customers paid, minus what it cost to make the products, minus running costs, minus tax. Each step tells you something.</p>
+  <div class="tbl-wrap" data-rv><table>${thead}<tbody>
+    ${row("Revenue","rev","total")}
+    ${row("Cost of revenue (making the chips)","cogs","sub",neg)}
+    ${row("Gross profit","gp","total")}
+    ${row("Research & development","rd","sub",neg)}
+    ${row("Sales, general & admin","sga","sub",neg)}
+    ${row("One-off: Arm deal termination fee","other_opex","sub",neg)}
+    ${row("Operating income","opinc","total")}
+    ${row("Other income (interest, investment gains)","nonop","sub")}
+    ${row("Income tax","tax","sub",neg)}
+    ${row("Net income","ni","total")}
+    ${row("Diluted EPS (split-adjusted, $)","eps","",v=>"$"+v.toFixed(2))}
+  </tbody><caption>Source: NVIDIA 10-K filings via SEC EDGAR. Brackets mean a cost.</caption></table></div>
+  <div class="note warn"><span class="ic">!</span><p><b>Two traps in this table.</b> In FY2023, NVIDIA paid a <b>$1,353M fee</b> when its takeover of Arm was blocked. That one-off makes FY2023 look worse than the normal business was. In FY2026, <b>$11,063M of "other income"</b> came largely from gains on investments, not from selling chips. Always separate one-offs from the core business.</p></div>
+
+  <div class="chart" data-rv id="ch-rev"><h4>Revenue vs net income</h4><div class="sub">US$ billions, fiscal years. Hover over a bar for the exact figure.</div>
+    <div class="legend"><span><i style="background:var(--s1)"></i>Revenue</span><span><i style="background:var(--s2)"></i>Net income</span></div><div class="tip" hidden></div></div>
+
+  <h3>1b · Balance sheet</h3>
+  <p>A snapshot on the last day of the year. It always balances: <b>assets = liabilities + equity</b>. What the company owns was paid for either by borrowing or by its owners.</p>
+  <div class="tbl-wrap" data-rv><table>${thead}<tbody>
+    ${row("Cash & cash equivalents","cash","sub")}
+    ${row("Accounts receivable (owed by customers)","ar","sub")}
+    ${row("Inventory","inv","sub")}
+    ${row("Current assets (cash or cash within a year)","ca","total")}
+    ${row("Total assets","assets","total")}
+    ${row("Current liabilities (due within a year)","cl","sub")}
+    ${row("Total debt","debt","sub")}
+    ${row("Total liabilities","liab","total")}
+    ${row("Shareholders' equity","eq","total")}
+  </tbody><caption>Check it yourself: FY2026 total assets ${Mf(f26.assets)} = liabilities ${Mf(f26.liab)} + equity ${Mf(f26.eq)}.</caption></table></div>
+
+  <h3>1c · Cash flow statement</h3>
+  <p>Profit is an accounting opinion; cash is a fact. This statement shows the cash the business actually generated and what management did with it.</p>
+  <div class="tbl-wrap" data-rv><table>${thead}<tbody>
+    ${row("Cash from operations","ocf","total")}
+    ${row("Capital spending (factories, equipment)","capex","sub",neg)}
+    ${row("Free cash flow","fcf_","total")}
+    ${row("Share buybacks","buyback","sub",neg)}
+    ${row("Dividends","div","sub",neg)}
+    ${row("Stock-based pay (non-cash cost)","sbc","sub")}
+  </tbody><caption>Free cash flow = cash from operations − capital spending.</caption></table></div>
+  <div class="chart" data-rv id="ch-wf"><h4>Where FY2026's cash went</h4><div class="sub">US$ billions. Navy = cash generated, gold = cash paid out.</div><div class="tip" hidden></div></div>
+</div></section>
+
+<section class="s-paper" id="ratios"><div class="wrap">
+  <span class="lesson-no">LESSON 2</span>
+  <h2 class="big">Ratios: making <em>numbers talk</em></h2>
+  <p class="sec-lede">A number alone means little. $120 billion of profit is huge for a café and small for a whole country. Ratios divide one number by another so you can compare years and companies. Each card shows the formula, the FY2026 working and five years of history. Then it's your turn.</p>
+
+  <div class="group"><div class="group-h"><h3>Growth</h3><span>How fast is the business getting bigger?</span></div><div class="ratios">
+    ${ratio({name:"Revenue growth",formula:"(Revenue this year ÷ last year) − 1",get:fy=>k(fy,"rev_growth"),fmt:v=>P(v,0),work:`FY2026: ${B(f26.rev)} ÷ ${B(f25.rev)} − 1 = <b>${P(k("FY26","rev_growth"))}</b>`,means:"NVIDIA more than doubled in FY2024 and FY2025 as companies raced to buy AI chips. Growth is still very fast but slowing, which is normal as a company gets this big.",watch:"FY2023 shows growth can stop suddenly (0.2%) when customers pause orders."})}
+    ${ratio({name:"R&D as % of revenue",formula:"Research & development ÷ revenue",get:fy=>k(fy,"rd_pct"),fmt:v=>P(v,0),work:`FY2026: ${B(f26.rd)} ÷ ${B(f26.rev)} = <b>${P(k("FY26","rd_pct"))}</b>`,means:"R&D spending grew from $5.3B to $18.5B, yet it fell as a share of revenue because sales grew even faster. That's called operating leverage."})}
+    ${exHTML("growth")}
+  </div></div>
+
+  <div class="group"><div class="group-h"><h3>Profitability</h3><span>How much of each dollar does it keep?</span></div><div class="ratios">
+    ${ratio({name:"Gross margin",formula:"Gross profit ÷ revenue",get:fy=>k(fy,"gm"),fmt:v=>P(v,0),work:`FY2026: ${B(f26.gp)} ÷ ${B(f26.rev)} = <b>${P(k("FY26","gm"))}</b>`,means:"Shows pricing power. Most chipmakers earn 40–60%; NVIDIA earns over 70% because customers have few alternatives.",watch:"It dipped from 75% to 71% in FY2026. Watch whether competition or new products push it lower."})}
+    ${ratio({name:"Operating margin",formula:"Operating income ÷ revenue",get:fy=>k(fy,"om"),fmt:v=>P(v,0),work:`FY2026: ${B(f26.opinc)} ÷ ${B(f26.rev)} = <b>${P(k("FY26","om"))}</b>`,means:"Profit from the core business after all running costs. Above 20% is considered strong for most companies; NVIDIA is at 60%."})}
+    ${ratio({name:"Net margin",formula:"Net income ÷ revenue",get:fy=>k(fy,"nm"),fmt:v=>P(v,0),work:`FY2026: ${B(f26.ni)} ÷ ${B(f26.rev)} = <b>${P(k("FY26","nm"))}</b>`,means:"What's left for shareholders after everything, including tax.",watch:"Investment gains lifted FY2026 net income. Compare it with the operating margin to spot this."})}
+    ${ratio({name:"Effective tax rate",formula:"Income tax ÷ profit before tax",get:fy=>k(fy,"tax_rate"),fmt:v=>P(v,0),work:`FY2026: ${B(f26.tax)} ÷ ${B(f26.pretax)} = <b>${P(k("FY26","tax_rate"))}</b>`,means:"Rising towards normal levels after tax credits made it unusually low in FY2022–FY2023 (it was even negative in FY2023)."})}
+    ${exHTML("gm")}${exHTML("om")}
+  </div></div>
+
+  <div class="chart" data-rv id="ch-mar"><h4>Margins over five years</h4><div class="sub">% of revenue. Hover to compare years.</div>
+    <div class="legend"><span><i class="ln" style="background:var(--s1)"></i>Gross</span><span><i class="ln" style="background:var(--s3)"></i>Operating</span><span><i class="ln" style="background:var(--s2)"></i>Net</span></div><div class="tip" hidden></div></div>
+
+  <div class="group"><div class="group-h"><h3>Returns</h3><span>How well does it use the money invested in it?</span></div><div class="ratios">
+    ${ratio({name:"Return on equity (ROE)",formula:"Net income ÷ average equity",get:fy=>k(fy,"roe"),fmt:v=>P(v,0),work:`FY2026: ${B(f26.ni)} ÷ ${B(avgEq)} = <b>${P(k("FY26","roe"))}</b>`,means:"Above 15% is usually good. NVIDIA's ~100% means each dollar shareholders have in the business produced about a dollar of profit in one year."})}
+    ${ratio({name:"Return on assets (ROA)",formula:"Net income ÷ average total assets",get:fy=>k(fy,"roa"),fmt:v=>P(v,0),work:`FY2026: ${B(f26.ni)} ÷ ${B((f25.assets+f26.assets)/2)} = <b>${P(k("FY26","roa"))}</b>`,means:"Profit per dollar of everything the company owns. Banks earn about 1%; NVIDIA earns 75%, because it designs chips but outsources the factories."})}
+    ${exHTML("roe")}
+  </div></div>
+
+  <div class="group"><div class="group-h"><h3>Liquidity & debt</h3><span>Could it survive a bad year?</span></div><div class="ratios">
+    ${ratio({name:"Current ratio",formula:"Current assets ÷ current liabilities",get:fy=>k(fy,"current"),fmt:v=>X(v,1),work:`FY2026: ${B(f26.ca)} ÷ ${B(f26.cl)} = <b>${X(k("FY26","current"),2)}</b>`,means:"Above 1.5× is comfortable. NVIDIA could cover its short-term bills almost four times."})}
+    ${ratio({name:"Debt-to-equity",formula:"Total debt ÷ shareholders' equity",get:fy=>k(fy,"de"),fmt:v=>v.toFixed(2),work:`FY2026: ${B(f26.debt)} ÷ ${B(f26.eq)} = <b>${k("FY26","de").toFixed(3)}</b>`,means:"How much the company relies on borrowing. Under 0.5 is conservative; NVIDIA has hardly any debt compared with its size."})}
+    ${exHTML("current")}${exHTML("de")}
+  </div></div>
+
+  <div class="group"><div class="group-h"><h3>Efficiency</h3><span>How fast does money move through the business?</span></div><div class="ratios">
+    ${ratio({name:"Days inventory",formula:"365 ÷ (cost of revenue ÷ average inventory)",get:fy=>k(fy,"dio"),fmt:v=>Math.round(v)+"d",work:`FY2026: inventory turns ${X(k("FY26","inv_turn"))} a year → 365 ÷ ${k("FY26","inv_turn").toFixed(2)} = <b>${Math.round(k("FY26","dio"))} days</b>`,means:"How long chips sit in stock before being sold. A jump (like FY2023's 122 days) can be an early sign that demand is cooling.",watch:"Inventory doubled to $21.4B in FY2026. That's fine if demand holds, risky if it doesn't."})}
+    ${ratio({name:"Days to get paid (DSO)",formula:"Receivables ÷ revenue × 365",get:fy=>k(fy,"dso"),fmt:v=>Math.round(v)+"d",work:`FY2026: ${B(f26.ar)} ÷ ${B(f26.rev)} × 365 = <b>${Math.round(k("FY26","dso"))} days</b>`,means:"About two months on average for customers to pay. Stable is good; a steady rise can mean customers are struggling to pay."})}
+  </div></div>
+
+  <div class="group"><div class="group-h"><h3>Cash flow</h3><span>Is the profit real cash?</span></div><div class="ratios">
+    ${ratio({name:"Free cash flow margin",formula:"(Operating cash flow − capex) ÷ revenue",get:fy=>k(fy,"fcf_margin"),fmt:v=>P(v,0),work:`FY2026: ${B(k("FY26","fcf"))} ÷ ${B(f26.rev)} = <b>${P(k("FY26","fcf_margin"))}</b>`,means:"Almost 45 cents of free cash from every dollar of sales, one of the highest of any large company."})}
+    ${ratio({name:"Cash conversion",formula:"Operating cash flow ÷ net income",get:fy=>k(fy,"cash_conv"),fmt:v=>X(v,2),work:`FY2026: ${B(f26.ocf)} ÷ ${B(f26.ni)} = <b>${X(k("FY26","cash_conv"),2)}</b>`,means:"Near 1× means profits are backed by real cash. Well below 1× for several years would be a red flag.",watch:"Slightly under 1× because cash was tied up in growing inventory and receivables, and because investment gains aren't cash."})}
+    ${exHTML("fcf")}
+  </div></div>
+
+  <div class="tbl-wrap" data-rv><table><thead><tr><th>All ratios</th>${Y.map(fy=>`<th>${LABEL[fy]}</th>`).join("")}</tr></thead><tbody>
+    ${[["Revenue growth","rev_growth",v=>P(v)],["Gross margin","gm",v=>P(v)],["Operating margin","om",v=>P(v)],["Net margin","nm",v=>P(v)],["ROE","roe",v=>P(v)],["ROA","roa",v=>P(v)],["Current ratio","current",v=>X(v,2)],["Quick ratio","quick",v=>X(v,2)],["Debt-to-equity","de",v=>v.toFixed(2)],["Days inventory","dio",v=>Math.round(v)],["Days to get paid","dso",v=>Math.round(v)],["FCF margin","fcf_margin",v=>P(v)],["Cash conversion","cash_conv",v=>X(v,2)],["Stock pay % of revenue","sbc_pct",v=>P(v)],["Buybacks + dividends % of FCF","sh_return_pct_fcf",v=>P(v,0)]].map(([n,key,fm])=>`<tr><td>${n}</td>${Y.map(fy=>`<td class="num ${fy==="FY26"?"hl":""}">${fm(k(fy,key))}</td>`).join("")}</tr>`).join("")}
+  </tbody><caption>ROE, ROA and inventory days use the average of opening and closing balances.</caption></table></div>
+</div></section>
+
+<section class="s-sand" id="stock"><div class="wrap">
+  <span class="lesson-no">LESSON 3</span>
+  <h2 class="big">The stock: <em>price vs value</em></h2>
+  <p class="sec-lede">A great company isn't automatically a great investment. What matters is what you pay. Valuation ratios compare the share price with what the business earns.</p>
+  <div class="chart" data-rv id="ch-stock"><h4>$100 invested five years ago</h4><div class="sub">NVIDIA vs the S&amp;P 500 (via the SPY fund), weekly closing prices, split-adjusted, excluding dividends.</div>
+    <div class="legend"><span><i class="ln" style="background:var(--s1)"></i>NVIDIA</span><span><i class="ln" style="background:var(--s2)"></i>S&amp;P 500</span></div><div class="tip" hidden></div></div>
+  <div class="note"><span class="ic">↗</span><p>From ${esc(D.series[0][0])} to ${esc(V.price_date)}, NVIDIA's share price rose <b>${Math.round(totalReturn)}%</b>, while the S&amp;P 500 rose <b>${Math.round(spyReturn)}%</b>. Notice the fall in 2022: the share price roughly halved before the AI boom. High-growth stocks swing hard in both directions.</p></div>
+  <div class="note warn"><span class="ic">!</span><p><b>Volatility, live.</b> In the weeks before this analysis, the price fell from about $230 in early October 2026 to $125.53 on 20 November, then jumped back to about $${V.price} on ${esc(V.price_date)}. The company's results didn't change that much in six weeks; investors' expectations did. That's why analysts separate a company's <i>value</i> from its share <i>price</i>. The ${esc(V.price_date)} price used on this page is a mid-day price.</p></div>
+
+  <div class="group"><div class="group-h"><h3>Valuation</h3><span>Is the price reasonable for what it earns?</span></div><div class="ratios">
+    ${ratio({name:"P/E at each fiscal year-end",formula:"Share price ÷ earnings per share",get:fy=>k(fy,"pe_fyend"),fmt:v=>X(v,0),work:`Today: $${V.price} ÷ FY2026 EPS $${f26.eps.toFixed(2)} = <b>${X(V.pe_fy26)}</b>. Using the last 12 months' EPS ($${V.ttm.eps.toFixed(2)}) instead: <b>${X(V.pe_ttm)}</b>.`,means:"How many dollars investors pay for $1 of yearly profit. The S&P 500 has historically averaged roughly 15–20×. A high P/E means the market expects strong growth to continue.",watch:"The P/E falls fast when profits grow faster than the price, as here. The 'last 12 months' figure includes investment gains, which flatters it."})}
+    ${ratio({name:"Price-to-sales at year-end",formula:"Market value ÷ revenue",get:fy=>k(fy,"ps_fyend"),fmt:v=>X(v,0),work:`Today: $${(V.mcap_b/1000).toFixed(2)}T ÷ last-12-month revenue ${B(V.ttm.rev)} = <b>${X(V.ps_ttm)}</b>`,means:"Useful when profits are unusual. Most large companies trade at 1–5× sales. NVIDIA's ratio is high because its margins are so high."})}
+    ${exHTML("pe")}
+  </div></div>
+  <div class="cols" style="margin-top:16px">
+    <div class="card" data-rv><div class="q">Market value</div><p><b class="num">$${(V.mcap_b/1000).toFixed(2)} trillion</b> = $${V.price} × ${(V.shares_m/1000).toFixed(1)}B shares. This is what the whole company is worth on the stock market.</p></div>
+    <div class="card" data-rv><div class="q">Free cash flow yield</div><p><b class="num">${P(V.fcf_yield_fy26,1)}</b> = FY2026 free cash flow ÷ market value. If you bought the whole company, that's the cash return per year at today's size.</p></div>
+    <div class="card" data-rv><div class="q">Dividend yield</div><p><b class="num">${P(V.div_yield,2)}</b>. NVIDIA pays only $0.01 a quarter per share and returns cash mainly through buybacks: ${B(f26.buyback)} in FY2026.</p></div>
+  </div>
+</div></section>
+
+<section class="s-ink" id="verdict"><div class="wrap">
+  <span class="lesson-no">LESSON 4</span>
+  <h2 class="big">Putting it <em>together</em></h2>
+  <p class="sec-lede">An analyst's job is to turn all these numbers into a balanced view. Here's how I'd summarise NVIDIA, using only what the data above shows.</p>
+  <div class="vgrid">
+    <div class="vcard" data-rv><h4>Strengths (the bull case)</h4><ul>
+      <li>Revenue grew from ${B(R.FY22.rev)} to ${B(f26.rev)} in four years.</li>
+      <li>Margins at the top of any large company: 71% gross, 60% operating.</li>
+      <li>Profits are real cash: ${B(k("FY26","fcf"))} free cash flow in FY2026.</li>
+      <li>A rock-solid balance sheet, with debt only 5% of equity and a current ratio near 4×.</li>
+      <li>Big returns to shareholders: ${B(f26.buyback+f26.div)} of buybacks and dividends in FY2026.</li>
+    </ul></div>
+    <div class="vcard" data-rv><h4>Risks (the bear case)</h4><ul>
+      <li>FY2023 proves demand can stall: revenue flat, operating margin down to 16%.</li>
+      <li>Growth is slowing (126% → 114% → 66%), and inventory doubled in FY2026.</li>
+      <li>Gross margin slipped from 75% to 71%. Competitors and customers' own chips could push it lower.</li>
+      <li>Part of recent profit comes from investment gains, which may not repeat.</li>
+      <li>The share price already assumes a lot of future growth, and it halved in 2022.</li>
+    </ul></div>
+  </div>
+  <div class="take" data-rv><b>My take</b>NVIDIA is an exceptionally strong <i>business</i>: high growth, high margins, real cash and almost no debt. Whether it's a good <i>investment</i> today depends on how long AI spending keeps growing. The numbers to watch each quarter are revenue growth, gross margin and inventory. If growth slows while inventory keeps rising, that's the first warning sign, just as in FY2023.</div>
+  <p class="sec-lede" style="margin-top:18px;font-size:13px">Educational analysis for learning purposes, not investment advice.</p>
+</div></section>
+
+<section class="s-paper" id="glossary"><div class="wrap">
+  <h2 class="big">Glossary <em>& sources</em></h2>
+  <div class="gloss">
+    <div><b>10-K / 10-Q</b>The annual and quarterly reports US companies must file with the SEC.</div>
+    <div><b>EPS</b>Earnings per share: net income ÷ number of shares. "Diluted" includes shares that could be created from employee stock awards.</div>
+    <div><b>Capex</b>Capital expenditure: money spent on long-lasting assets such as buildings and equipment.</div>
+    <div><b>Free cash flow</b>Cash from operations minus capex. Cash the company can freely use.</div>
+    <div><b>Buyback</b>A company buying its own shares, which gives each remaining share a bigger slice.</div>
+    <div><b>Operating leverage</b>When revenue grows faster than costs, so margins rise.</div>
+    <div><b>Last 12 months (LTM)</b>The latest four quarters added together. More up to date than the last fiscal year.</div>
+    <div><b>Stock split</b>Dividing each share into several cheaper ones. The company's value doesn't change.</div>
+    <div><b>Market value</b>Share price × number of shares. Also called market capitalisation.</div>
+  </div>
+  <div class="note" style="margin-top:22px"><span class="ic">§</span><p><b>Sources.</b> Financial statements: NVIDIA 10-K filings for FY2022–FY2026 and 10-Q filings for FY2027 to July 2026, via the <a href="https://www.sec.gov/edgar/browse/?CIK=1045810" target="_blank" rel="noopener">SEC EDGAR database</a>. Share prices: weekly closing prices from Yahoo Finance, split-adjusted, last price ${esc(V.price_date)}. Last-12-month figures run to 26 July 2026. All calculations by Krish Sinha.</p></div>
+</div></section>
+<footer><div class="wrap"><span>© Krish Sinha · NVIDIA case study</span><a href="index.html">Back to portfolio ↗</a></div></footer>`;
+
+
+
+/* ---------- charts ---------- */
+barChart(document.getElementById("ch-rev"), {aria:"Revenue and net income by fiscal year", cats:Y.map(fy=>LABEL[fy]), labels:Y.map(fy=>LABEL[fy]),
+  series:[{name:"Revenue",color:"#2f55a4",data:Y.map(fy=>R[fy].rev/1000)},{name:"Net income",color:"#b8862f",data:Y.map(fy=>R[fy].ni/1000)}],
+  fmt:v=>"$"+v.toFixed(1)+"B", fmtShort:v=>"$"+Math.round(v)+"B", fmtAxis:v=>"$"+Math.round(v)+"B"});
+
+lineChart(document.getElementById("ch-mar"), {aria:"Gross, operating and net margin by fiscal year", x:Y, dots:true, max:100, min:0, xLabel:i=>LABEL[Y[i]], tipX:i=>LABEL[Y[i]],
+  series:[{name:"Gross margin",color:"#2f55a4",data:Y.map(fy=>k(fy,"gm")),end:"Gross "+P(k("FY26","gm"),0),dy:-6},{name:"Operating margin",color:"#4f8fd6",data:Y.map(fy=>k(fy,"om")),end:"Operating "+P(k("FY26","om"),0),dy:-2},{name:"Net margin",color:"#b8862f",data:Y.map(fy=>k(fy,"nm")),end:"Net "+P(k("FY26","nm"),0),dy:12}],
+  fmt:v=>P(v), fmtAxis:v=>Math.round(v)+"%", right:110});
+
+const base = D.series[0];
+const idxN = D.series.map(r => r[1]/base[1]*100), idxS = D.series.map(r => r[2]!=null ? r[2]/base[2]*100 : null);
+const yearTicks = []; D.series.forEach((r,i)=>{ if(i===0 || r[0].slice(0,4)!==D.series[i-1][0].slice(0,4)) yearTicks.push(i); });
+lineChart(document.getElementById("ch-stock"), {aria:"Growth of $100 in NVIDIA versus the S&P 500 over five years", x:D.series.map(r=>r[0]), max:niceMax(Math.max(...idxN)), min:0, ref:100,
+  xTicks:yearTicks.slice(1), xLabel:i=>D.series[i][0].slice(0,4), tipX:i=>D.series[i][0],
+  series:[{name:"NVIDIA",color:"#2f55a4",data:idxN,end:"NVIDIA $"+Math.round(idxN[idxN.length-1])},{name:"S&P 500",color:"#b8862f",data:idxS,end:"S&P $"+Math.round(idxS[idxS.length-1])}],
+  fmt:v=>v==null?"–":"$"+v.toFixed(0), fmtAxis:v=>"$"+Math.round(v), right:96});
+
+/* waterfall */
+(function(){
+  const el = document.getElementById("ch-wf"), W=640,H=270,L=48,Rr=16,T=16,Bm=44, iw=W-L-Rr, ih=H-T-Bm;
+  const ocf=f26.ocf/1000, capex=f26.capex/1000, fcf=ocf-capex, bb=f26.buyback/1000, dv=f26.div/1000, left=fcf-bb-dv;
+  const steps=[["Cash from operations",0,ocf,"in"],["Capital spending",fcf,ocf,"out"],["Free cash flow",0,fcf,"in"],["Buybacks",fcf-bb,fcf,"out"],["Dividends",left,fcf-bb,"out"],["Kept",0,left,"in"]];
+  const step=niceMax(ocf/5), max=Math.ceil(ocf/step)*step, nt=Math.round(max/step), y=scale(0,max,T+ih,T), gw=iw/steps.length, bw=Math.min(54,gw-20);
+  let s=`<svg class="c" viewBox="0 0 ${W} ${H}" role="img" aria-label="Free cash flow waterfall for FY2026">`;
+  for(let i=0;i<=nt;i++){ const v=step*i, yy=y(v); s+=`<line class="grid" x1="${L}" x2="${W-Rr}" y1="${yy}" y2="${yy}"/><text x="${L-8}" y="${yy+4}" text-anchor="end">$${Math.round(v)}B</text>`; }
+  steps.forEach(([n,a,b,t],i)=>{ const x=L+gw*i+(gw-bw)/2, y1=y(b), y0=y(a), val=b-a;
+    s+=`<rect x="${x}" y="${y1}" width="${bw}" height="${Math.max(2,y0-y1)}" rx="4" fill="${t==="in"?"#2f55a4":"#b8862f"}" data-tip="${esc(n+": <b>"+(t==="out"?"−":"")+"$"+val.toFixed(1)+"B</b>")}"/>`;
+    s+=`<text class="lab" x="${x+bw/2}" y="${y1-6}" text-anchor="middle">${t==="out"?"−":""}$${val.toFixed(1)}B</text>`;
+    const words=n.split(" "); const l1=words.slice(0,2).join(" "), l2=words.slice(2).join(" ");
+    s+=`<text x="${x+bw/2}" y="${H-24}" text-anchor="middle">${esc(l1)}</text>${l2?`<text x="${x+bw/2}" y="${H-10}" text-anchor="middle">${esc(l2)}</text>`:""}`; });
+  s+=`<line class="axis" x1="${L}" x2="${W-Rr}" y1="${y(0)}" y2="${y(0)}"/></svg>`;
+  el.insertAdjacentHTML("beforeend", s); hoverMarks(el);
+})();
+
+/* ---------- exercises behaviour ---------- */
+function updateProgress(){ const n = Object.keys(solved).filter(k=>solved[k]).length; document.getElementById("pcount").textContent = n; document.getElementById("pfill").style.width = (n/Object.keys(EX).length*100) + "%"; }
+updateProgress();
+document.addEventListener("submit", ev => {
+  const f = ev.target.closest("[data-ex]"); if(!f) return; ev.preventDefault();
+  const id = f.dataset.ex, e = EX[id], raw = document.getElementById("in-"+id).value.replace(/[^0-9.\-]/g,""), v = parseFloat(raw), fb = document.getElementById("fb-"+id);
+  if(raw === "" || isNaN(v)){ fb.className = "fb no"; fb.textContent = "Type a number first, for example 42.5."; return; }
+  const ok = Math.abs(v - e.ans) <= e.tol || (e.unit==="%" && Math.abs(v*100 - e.ans) <= e.tol);
+  if(ok){ fb.className = "fb ok"; fb.textContent = "Correct. Nice work: that's exactly how an analyst would calculate it."; solved[id] = true; document.getElementById("done-"+id).textContent = "✓ Solved"; try{ localStorage.setItem("nvda-solved", JSON.stringify(solved)); }catch(err){} updateProgress(); }
+  else { fb.className = "fb no"; fb.textContent = (v > e.ans ? "A bit high." : "A bit low.") + " Check which numbers you divided, or press Hint."; }
+});
+document.addEventListener("click", ev => {
+  const h = ev.target.closest("[data-hint]"), s = ev.target.closest("[data-sol]");
+  if(h){ const fb = document.getElementById("fb-"+h.dataset.hint); fb.className = "fb"; fb.textContent = "Hint: " + EX[h.dataset.hint].hint; }
+  if(s){ const box = document.getElementById("sol-"+s.dataset.sol); box.innerHTML = EX[s.dataset.sol].sol; box.hidden = !box.hidden; s.textContent = box.hidden ? "Show working" : "Hide working"; }
+  const a = ev.target.closest('a[href^="#"]');
+  if(a){ ev.preventDefault(); const id = a.getAttribute("href").slice(1); const t = id==="top" ? null : document.getElementById(id); if(t) t.scrollIntoView({behavior:"smooth"}); else scrollTo({top:0,behavior:"smooth"}); }
+});
+
+/* ---------- reveal in both directions ---------- */
+if("IntersectionObserver" in window && !matchMedia("(prefers-reduced-motion: reduce)").matches){
+  const io = new IntersectionObserver(es => es.forEach(en => { const c = en.target.classList; if(en.isIntersecting){ c.remove("rv-pre"); } else { c.add("rv-pre"); c.toggle("rv-up", en.boundingClientRect.top < 0); } }), {rootMargin:"0px 0px -6% 0px", threshold:0.05});
+  document.querySelectorAll("[data-rv]").forEach(el => { if(el.getBoundingClientRect().top > innerHeight) el.classList.add("rv-pre"); io.observe(el); });
+}
+})();
+</script>
+</body></html>
