@@ -271,6 +271,8 @@ section{position:relative;border-radius:44px 44px 0 0;margin-top:-44px;backgroun
 .case-go{margin:0;background:var(--tan);color:var(--ink)}
 .case-go:hover{background:#efe0bf}
 .case-meta{font-size:13px;color:#a9b4cb}
+.case-note{display:flex;gap:10px;align-items:flex-start;margin:22px 0 0;max-width:52ch;font-size:12.5px;line-height:1.5;color:#a9b4cb;border-top:1px solid #2c3d63;padding-top:14px}
+.case-note-ic{flex:none;color:var(--tan);font-size:14px;line-height:1.3}
 .case-card{display:block;text-decoration:none;color:var(--ink);background:var(--paper);border-radius:24px;padding:22px;box-shadow:0 24px 50px rgba(0,0,0,.3);transform:rotate(2deg);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
 .case-card:hover{transform:rotate(0) translateY(-6px)}
 .cc-top{display:flex;justify-content:space-between;font-size:12px;font-weight:600;letter-spacing:.14em;color:var(--taupe)}
@@ -550,6 +552,7 @@ function render(){
         <h2 class="case-title"${E("case.t")}>${esc(T("case.t","NVIDIA, decoded."))}</h2>
         <p class="case-p"${E("case.p",1)}>${esc(T("case.p","I analysed NVIDIA's last five years of official SEC filings: the three financial statements, 15 key ratios, the share price and a final verdict. It's built as an interactive lesson with exercises, so you can check my numbers yourself."))}</p>
         <div class="case-btns"><a class="btn case-go" href="${CASE_URL}">Read the case study ↗</a><span class="case-meta">Statements · Ratios · Stock · Verdict</span></div>
+        <p class="case-note"><span class="case-note-ic" aria-hidden="true">✳</span><span${E("case.note",1)}>${esc(T("case.note","Made with the help of Claude (Anthropic's AI), which helped gather the data from NVIDIA's SEC filings, build the charts and code the page. For learning purposes, not investment advice."))}</span></p>
       </div>
       <a class="case-card" href="${CASE_URL}" data-rv aria-label="Open the NVIDIA case study">
         <div class="cc-top"><span>NVDA</span><span>FY2026</span></div>
