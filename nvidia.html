@@ -45,6 +45,8 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .progress{margin-top:30px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:14px;color:var(--ink-2)}
 .pbar{flex:1 1 220px;max-width:360px;height:10px;border-radius:99px;background:var(--paper);box-shadow:inset 0 0 0 1px var(--line);overflow:hidden}
 .pbar i{display:block;height:100%;width:0;background:var(--navy);border-radius:99px;transition:width .4s}
+.made-with{display:flex;gap:10px;align-items:flex-start;margin:22px 0 0;max-width:62ch;font-size:13px;line-height:1.5;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
+.made-with span{color:var(--s2);font-size:14px;line-height:1.3}
 
 /* sections */
 section{position:relative;border-radius:40px 40px 0 0;margin-top:-40px;box-shadow:0 -16px 36px rgba(15,27,51,.07);padding-block:88px}
@@ -328,6 +330,7 @@ document.getElementById("app").innerHTML = `
     <div class="stat" style="--r:2deg"><b class="num">+${Math.round(totalReturn)}%</b><span>Share price, last 5 years</span></div>
   </div>
   <div class="progress"><span><b id="pcount">0</b> of ${Object.keys(EX).length} exercises solved</span><div class="pbar" aria-hidden="true"><i id="pfill"></i></div></div>
+  <p class="made-with"><span aria-hidden="true">✳</span> Made with the help of Claude (Anthropic's AI), which helped gather the data from NVIDIA's SEC filings, build the charts and code the page. For learning purposes, not investment advice.</p>
 </div>
 
 <section class="s-paper" id="before"><div class="wrap">
@@ -506,7 +509,7 @@ document.getElementById("app").innerHTML = `
     <div><b>Stock split</b>Dividing each share into several cheaper ones. The company's value doesn't change.</div>
     <div><b>Market value</b>Share price × number of shares. Also called market capitalisation.</div>
   </div>
-  <div class="note" style="margin-top:22px"><span class="ic">§</span><p><b>Sources.</b> Financial statements: NVIDIA 10-K filings for FY2022–FY2026 and 10-Q filings for FY2027 to July 2026, via the <a href="https://www.sec.gov/edgar/browse/?CIK=1045810" target="_blank" rel="noopener">SEC EDGAR database</a>. Share prices: weekly closing prices from Yahoo Finance, split-adjusted, last price ${esc(V.price_date)}. Last-12-month figures run to 26 July 2026. All calculations by Krish Sinha.</p></div>
+  <div class="note" style="margin-top:22px"><span class="ic">§</span><p><b>Sources.</b> Financial statements: NVIDIA 10-K filings for FY2022–FY2026 and 10-Q filings for FY2027 to July 2026, via the <a href="https://www.sec.gov/edgar/browse/?CIK=1045810" target="_blank" rel="noopener">SEC EDGAR database</a>. Share prices: weekly closing prices from Yahoo Finance, split-adjusted, last price ${esc(V.price_date)}. Last-12-month figures run to 26 July 2026. Made by Krish Sinha with the help of Claude (Anthropic's AI).</p></div>
 </div></section>
 <footer><div class="wrap"><span>© Krish Sinha · NVIDIA case study</span><a href="index.html">Back to portfolio ↗</a></div></footer>`;
 
