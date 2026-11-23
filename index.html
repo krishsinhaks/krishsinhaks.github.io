@@ -1,15 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><title>Krish Sinha · Portfolio</title>
-<meta name="description" content="Krish Sinha – final-year International Business student in Vienna. Finance internships at BNP Paribas Real Estate and Komunikacja+.">
-<meta property="og:title" content="Krish Sinha · Portfolio">
-<meta property="og:description" content="International Business student in Vienna. Warsaw → Vienna.">
-<meta property="og:image" content="portrait.jpg">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="icon" href="favicon.png" type="image/png" sizes="48x48">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<meta name="theme-color" content="#14233f">
-</head><body>
-<style id="pf-style">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Krish Sinha · Portfolio</title><meta name="description" content="Krish Sinha – final-year International Business student in Vienna. Finance internships at BNP Paribas Real Estate and Komunikacja+."><meta property="og:title" content="Krish Sinha · Portfolio"><meta property="og:description" content="International Business student in Vienna. Warsaw → Vienna."><meta property="og:image" content="portrait.jpg"><link rel="icon" href="favicon.svg" type="image/svg+xml"><link rel="icon" href="favicon.png" type="image/png" sizes="48x48"><link rel="apple-touch-icon" href="apple-touch-icon.png"><meta name="theme-color" content="#14233f"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body><style id="pf-style">
 /* Layout: beige canvas with navy ink; giant taupe name behind a cut-out portrait, then big-type section titles with collage elements. Single light theme by choice. */
 :root{
   --sand:#ece3d3; --sand-2:#e2d6c1; --taupe:#7d8aa6; --ink:#14233f; --ink-2:#3d4b68;
@@ -271,6 +260,29 @@ section{position:relative;border-radius:44px 44px 0 0;margin-top:-44px;backgroun
 .land.rv-pre{transform:translateY(60px) scale(.94)}
 .land.rv-pre.rv-up{transform:translateY(-60px) scale(.94)}
 
+/* case study */
+.case{background:var(--ink);color:#f4ead6}
+.case-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:48px;align-items:center}
+.case-grid>*{min-width:0}
+.case-tag{display:inline-block;background:var(--tan);color:var(--ink);font-size:12px;font-weight:600;letter-spacing:.14em;padding:5px 12px;border-radius:99px}
+.case-title{font-size:clamp(44px,7vw,92px);font-weight:800;letter-spacing:-.05em;line-height:.92;margin:18px 0 18px;color:#f4ead6}
+.case-p{font-size:17px;color:#cfd6e6;max-width:50ch;margin:0}
+.case-btns{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:26px}
+.case-go{margin:0;background:var(--tan);color:var(--ink)}
+.case-go:hover{background:#efe0bf}
+.case-meta{font-size:13px;color:#a9b4cb}
+.case-card{display:block;text-decoration:none;color:var(--ink);background:var(--paper);border-radius:24px;padding:22px;box-shadow:0 24px 50px rgba(0,0,0,.3);transform:rotate(2deg);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.case-card:hover{transform:rotate(0) translateY(-6px)}
+.cc-top{display:flex;justify-content:space-between;font-size:12px;font-weight:600;letter-spacing:.14em;color:var(--taupe)}
+.cc-stats{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px;margin:16px 0 18px}
+.cc-stats b{display:block;font-size:26px;font-weight:700;letter-spacing:-.03em;line-height:1.1}
+.cc-stats small{font-size:12px;color:var(--ink-2)}
+.cc-bars{width:100%;height:auto;display:block}
+.cc-bars rect{fill:var(--orange)}
+.cc-bars rect:last-child{fill:#b8862f}
+.cc-foot{font-size:11.5px;color:var(--taupe);margin-top:8px}
+@media (max-width:820px){.case-grid{grid-template-columns:1fr;gap:32px}.case-card{transform:none;max-width:420px}}
+
 /* phones and tablets */
 html,body{overflow-x:clip}
 section,.hero-wrap{overflow-x:clip}
@@ -402,7 +414,7 @@ state.photo = state.photo || null; state.logos = state.logos || {}; state.galler
 let canEdit = false, editing = false, assets = null, artifactNs = null, busy = false, statusMsg = "";
 const app = document.getElementById("app");
 const IMG = {"b3308778eae27589968e33f5ef90fab9": "portrait.jpg", "86aa7f6b3b23a01398d165ae098628e4": "warsaw.jpg", "028dc94d865c48f779fa85b94bfef00f": "vienna.jpg", "19684b14e752515cacffd7dcb75899fc": "photo-01.jpg", "91e3445e1847905bd46e555f76ecdc2c": "photo-02.jpg", "49e4ade49cf8de0b7e2cb1b6c2eff2c2": "photo-03.jpg", "87857f1af3f28b3ab10f7b7bb7eca168": "photo-04.jpg", "7306622f898aa8d249c84ddaa7e9c23d": "photo-05.jpg", "61ad13ce31746d9efe449c3b0ade70a7": "photo-06.jpg", "13c34f4df74f70515e49b2a30ad5ad28": "photo-07.jpg", "0c6f6af4ff58d21c52d839c559359a6e": "photo-08.jpg", "95efbd084fc87809c0131b5b141ae5aa": "photo-09.jpg", "9ce8c7fd19329a5391fb57b7cd306a15": "photo-10.jpg"};
-const blob = id => IMG[id] || ("" + id + ".jpg");
+const blob = id => IMG[id] || (id + ".jpg");
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
 function logoHTML(key, org){
@@ -449,6 +461,7 @@ function routeHTML(){
   return `<div class="terminus"><span>${esc(T("route.start","WAW · DEPARTURE"))}</span></div><ol class="route">${landmarkHTML("waw")}${stops}</ol><div class="terminus end"><span${E("route.end")}>${esc(T("route.end","NEXT STOP · YOUR TEAM"))}</span></div>`;
 }
 
+const CASE_URL = "nvidia.html";
 function rows(list, pre){
   return `<ol class="rows">${list.map((x,i)=>{ const k = pre+"."+i; const when = T(k+".when", x.when);
     return `<li class="row" data-rv>${logoHTML(x.key,x.org)}
@@ -499,7 +512,7 @@ function render(){
   app.innerHTML = `
   <header class="bar"><div class="bar-in">
     <a class="mark" href="#top">KS<small>WAW → VIE</small></a>
-    <nav class="idx" aria-label="Sections"><a href="#top"><b>01</b>Home</a><a href="#journey"><b>02</b>Route</a><a href="#archive"><b>03</b>Archive</a><a href="#about"><b>04</b>Toolkit</a><a href="#connect"><b>05</b>Contact</a></nav>
+    <nav class="idx" aria-label="Sections"><a href="#top"><b>01</b>Home</a><a href="#journey"><b>02</b>Route</a><a href="#case"><b>03</b>Case study</a><a href="#archive"><b>04</b>Archive</a><a href="#about"><b>05</b>Toolkit</a><a href="#connect"><b>06</b>Contact</a></nav>
     <a class="cta" href="https://${CV.linkedin}" target="_blank" rel="noopener">Let's Connect ↗</a>
   </div></header>
 
@@ -528,6 +541,28 @@ function render(){
   <section class="sec journey" id="journey"><div class="wrap">
     ${title("t.journey","The","Route")}
     ${routeHTML()}
+  </div></section>
+
+  <section class="sec case" id="case"><div class="wrap">
+    <div class="case-grid">
+      <div data-rv>
+        <span class="case-tag">CASE STUDY · FINANCE</span>
+        <h2 class="case-title"${E("case.t")}>${esc(T("case.t","NVIDIA, decoded."))}</h2>
+        <p class="case-p"${E("case.p",1)}>${esc(T("case.p","I analysed NVIDIA's last five years of official SEC filings: the three financial statements, 15 key ratios, the share price and a final verdict. It's built as an interactive lesson with exercises, so you can check my numbers yourself."))}</p>
+        <div class="case-btns"><a class="btn case-go" href="${CASE_URL}">Read the case study ↗</a><span class="case-meta">Statements · Ratios · Stock · Verdict</span></div>
+      </div>
+      <a class="case-card" href="${CASE_URL}" data-rv aria-label="Open the NVIDIA case study">
+        <div class="cc-top"><span>NVDA</span><span>FY2026</span></div>
+        <div class="cc-stats">
+          <div><b>$215.9B</b><small>Revenue</small></div>
+          <div><b>71%</b><small>Gross margin</small></div>
+          <div><b>$96.7B</b><small>Free cash flow</small></div>
+          <div><b>8</b><small>Exercises</small></div>
+        </div>
+        <svg class="cc-bars" viewBox="0 0 220 70" aria-hidden="true"><rect x="6" y="61" width="30" height="9" rx="3"/><rect x="50" y="61" width="30" height="9" rx="3"/><rect x="94" y="50" width="30" height="20" rx="3"/><rect x="138" y="28" width="30" height="42" rx="3"/><rect x="182" y="0" width="30" height="70" rx="3"/></svg>
+        <div class="cc-foot">Revenue, FY2022 → FY2026</div>
+      </a>
+    </div>
   </div></section>
 
   <section class="sec archive" id="archive">
@@ -759,5 +794,4 @@ if(!restoring) scrollTo(0, 0);
 })();
 })();
 </script>
-
 </body></html>
